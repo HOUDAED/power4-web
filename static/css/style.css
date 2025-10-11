@@ -1,0 +1,297 @@
+/* === RESET === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+  color: #fff;
+  /* perspective: 1000px; */ /* remove or comment out to avoid 3D stacking issues */
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* === STARFIELD CANVAS === */
+#starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* === CONTAINER === */
+.container {
+  max-width: 900px;
+  margin: 5vh auto;
+  padding: 2rem;
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+  border-radius: 20px;
+  box-shadow: 10px 10px 30px #000, -10px -10px 30px #333;
+  /* transform-style: preserve-3d; */ /* avoid preserve-3d */
+  animation: float 6s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes float {
+  0%, 100% { transform: rotateX(0deg) rotateY(0deg); }
+  50% { transform: rotateX(3deg) rotateY(3deg); }
+}
+
+/* === HEADER === */
+header h1 {
+  font-size: 3rem;
+  text-align: center;
+  color: #00ffff;
+  text-shadow: 2px 2px 0 #000, 4px 4px 0 #00cccc;
+  transform: none; /* remove translateZ */
+}
+
+header p {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  color: #ccc;
+}
+
+/* === PLAYERS INPUTS + VS === */
+.players {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  position: relative;
+  /* transform-style: flat; */ /* remove */
+}
+
+.players input {
+  width: 40%;
+  padding: 1rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+  color: #0ff;
+  box-shadow: inset 2px 2px 5px #000, inset -2px -2px 5px #333;
+  font-size: 1rem;
+  text-align: center;
+  z-index: 10;
+  position: relative;
+  transform: none;
+  pointer-events: auto; /* ensure inputs receive events */
+}
+
+.vs-label {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff;
+  transform: none; /* remove translateZ */
+  pointer-events: none;
+}
+
+/* === LEVEL BUTTONS === */
+.levels {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+.level-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  color: #fff;
+  background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+  box-shadow: 5px 5px 15px #000, -5px -5px 15px #333;
+  transform: translateY(0); /* use 2D translation instead of translateZ */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.level-btn:hover {
+  transform: translateY(-8px) scale(1.05); /* visual lift without 3D */
+  box-shadow: 10px 10px 30px #000, -10px -10px 30px #444;
+}
+
+.level-btn.selected {
+  outline: 2px solid #00ffff;
+  box-shadow: 0 0 20px #00ffff;
+}
+
+/* === LEVEL COLORS === */
+.level-btn.easy {
+  background: linear-gradient(145deg, #00cc99, #006655);
+}
+.level-btn.normal {
+  background: linear-gradient(145deg, #0055ff, #002288);
+}
+.level-btn.hard {
+  background: linear-gradient(145deg, #cc0000, #660000);
+}
+
+/* === WELCOME MESSAGE === */
+.welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem auto;
+  padding: 1.25rem 1.5rem;
+  max-width: 680px;
+  background: rgba(0, 255, 255, 0.04);
+  border: 1px solid rgba(0, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 18px rgba(0,255,255,0.06) inset;
+  color: #e6ffff;
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+
+.welcome-message p {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.welcome-message p:first-child {
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  font-size:1.4rem;
+  font-weight:700;
+}
+
+/* player token + layout */
+.player {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.player-token {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.6), inset 0 2px 6px rgba(255,255,255,0.06);
+  border: 2px solid rgba(0,0,0,0.35);
+}
+
+/* token colors: Player 1 = red, Player 2 = yellow */
+.player-token.p1 {
+  background: radial-gradient(circle at 30% 30%, #ff8a8a 0%, #cc0000 60%);
+}
+.player-token.p2 {
+  background: radial-gradient(circle at 30% 30%, #fff89a 0%, #ffb300 60%);
+}
+
+/* VS separator */
+.vs {
+  margin: 0 0.6rem;
+  color: #00ffff;
+  font-weight: 800;
+  text-shadow: 0 0 8px rgba(0,255,255,0.08);
+}
+
+/* difficulty badge */
+.difficulty-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  margin-left: 0.4rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45), 0 0 12px rgba(0,0,0,0.06) inset;
+}
+
+/* difficulty colors */
+.difficulty-badge.easy {
+  background: linear-gradient(145deg, #bfffe6, #00cc99);
+  color: #063a2e;
+}
+.difficulty-badge.normal {
+  background: linear-gradient(145deg, #cfe0ff, #0055ff);
+  color: #031e5b;
+}
+.difficulty-badge.hard {
+  background: linear-gradient(145deg, #ffd6d6, #cc0000);
+  color: #330000;
+}
+
+/* small neon pulse on the container */
+@keyframes neonPulse {
+  0%   { box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 6px rgba(0,255,255,0.03) inset; }
+  50%  { box-shadow: 0 16px 36px rgba(0,0,0,0.65), 0 0 24px rgba(0,255,255,0.08) inset; }
+  100% { box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 6px rgba(0,255,255,0.03) inset; }
+}
+.welcome-message { animation: neonPulse 3.5s ease-in-out infinite; }
+
+@media screen and (max-width: 600px) {
+  .welcome-message {
+    padding: 1rem;
+    max-width: 92%;
+  }
+  .welcome-message p:first-child {
+    font-size: 1.15rem;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* === START BUTTON === */
+.start-btn {
+  display: block;
+  margin: 2rem auto;
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #00c9ff, #005577);
+  color: #fff;
+  box-shadow: 5px 5px 15px #000, -5px -5px 15px #333;
+  transform: translateZ(20px);
+  transition: transform 0.3s ease;
+}
+
+.start-btn:hover {
+  transform: translateZ(40px) scale(1.1);
+  box-shadow: 10px 10px 30px #000, -10px -10px 30px #444;
+}
+
+/* === RESPONSIVE === */
+@media screen and (max-width: 600px) {
+  .players {
+    flex-direction: column;
+  }
+
+  .players input {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .vs-label {
+    display: none;
+  }
+
+  .levels {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .level-btn {
+    width: 80%;
+  }
+
+  .player-token { width: 26px; height: 26px; }
+}

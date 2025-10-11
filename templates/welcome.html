@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Power4 Web - Bienvenue</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Bienvenue sur Power4 Web !</h1>
+      <p>Préparez-vous pour la partie.</p>
+    </header>
+
+    <div class="welcome-message">
+      <p>
+        <span class="player">
+          <span class="player-token p1" aria-hidden="true"></span>
+          <strong>{{.Player1}}</strong>
+        </span>
+        <span class="vs">VS</span>
+        <span class="player">
+          <span class="player-token p2" aria-hidden="true"></span>
+          <strong>{{.Player2}}</strong>
+        </span>
+      </p>
+      <p>Niveau choisi : <strong class="difficulty-badge {{.Difficulty}}">{{.Difficulty}}</strong></p>
+    </div>
+
+    <form method="POST" action="/game">
+      <input type="hidden" name="player1" value="{{.Player1}}">
+      <input type="hidden" name="player2" value="{{.Player2}}">
+      <input type="hidden" name="difficulty" value="{{.Difficulty}}">
+      <button type="submit" class="start-btn">Commencer le jeu</button>
+    </form>
+  </div>
+</body>
+</html>
