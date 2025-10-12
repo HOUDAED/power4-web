@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Power4 Web - Partie</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/board.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Power4 - Partie</h1>
+         <div class="welcome-message">
+      <p>
+        <span class="player">
+          <span class="player-token p1" aria-hidden="true"></span>
+          <strong>{{.Player1}}</strong>
+        </span>
+        <span class="vs">VS</span>
+        <span class="player">
+          <span class="player-token p2" aria-hidden="true"></span>
+          <strong>{{.Player2}}</strong>
+        </span>
+      </p>
+      <p>Niveau choisi : <strong class="difficulty-badge {{.Difficulty}}">{{.Difficulty}}</strong></p>
+    </div>
+    </header>
+    <div class="game-container">
+        <form method="POST" action="/play">
+            <input type="hidden" name="player1" value="{{.Player1}}">
+            <input type="hidden" name="player2" value="{{.Player2}}">
+            <input type="hidden" name="difficulty" value="{{.Difficulty}}">
+
+            <!-- Ligne de boutons pour choisir la colonne -->
+            <div class="columns">
+            {{range .ColRange}}
+                <button type="submit" name="col" value="{{.}}">▼</button>
+            {{end}}
+            </div>
+
+            <!-- Grille du jeu -->
+            <table class="board">
+            {{range .Grid}}
+                <tr>
+                {{range .}}
+                    <td class="{{if eq . 1}}token1{{else if eq . 2}}token2{{end}}"></td>
+                {{end}}
+                </tr>
+            {{end}}
+            </table>
+        </form>
+</div>
+
+</body>
+</html>
