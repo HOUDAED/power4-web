@@ -6,51 +6,67 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="/static/css/style.css">
   <link rel="stylesheet" href="/static/css/board.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <header>
       <h1>Power4 - Partie</h1>
-         <div class="welcome-message">
-      <p>
-        <span class="player">
-          <span class="player-token p1" aria-hidden="true"></span>
+
+      <!-- Infos joueurs -->
+      <div class="players-info">
+        <div class="player">
+          <span class="player-token p1"></span>
           <strong>{{.Player1}}</strong>
-        </span>
+        </div>
         <span class="vs">VS</span>
-        <span class="player">
-          <span class="player-token p2" aria-hidden="true"></span>
+        <div class="player">
+          <span class="player-token p2"></span>
           <strong>{{.Player2}}</strong>
-        </span>
+        </div>
+      </div>
+
+      <!-- Tour actuel -->
+      <p class="turn-indicator">
+        Tour de :
+        <strong class="{{if eq .CurrentPlayer 1}}player1-name{{else}}player2-name{{end}}">
+          {{if eq .CurrentPlayer 1}}{{.Player1}}{{else}}{{.Player2}}{{end}}
+        </strong>
       </p>
-      <p>Niveau choisi : <strong class="difficulty-badge {{.Difficulty}}">{{.Difficulty}}</strong></p>
-    </div>
+
+      <!-- Difficulté -->
+      <p>
+        Niveau :
+        <strong class="difficulty-badge {{.Difficulty}}">{{.Difficulty}}</strong>
+      </p>
     </header>
+
+    <!-- Plateau du jeu -->
     <div class="game-container">
-        <form method="POST" action="/play">
-            <input type="hidden" name="player1" value="{{.Player1}}">
-            <input type="hidden" name="player2" value="{{.Player2}}">
-            <input type="hidden" name="difficulty" value="{{.Difficulty}}">
+      <form method="POST" action="/play">
+        <input type="hidden" name="player1" value="{{.Player1}}">
+        <input type="hidden" name="player2" value="{{.Player2}}">
+        <input type="hidden" name="difficulty" value="{{.Difficulty}}">
 
-            <!-- Ligne de boutons pour choisir la colonne -->
-            <div class="columns">
-            {{range .ColRange}}
-                <button type="submit" name="col" value="{{.}}">▼</button>
-            {{end}}
-            </div>
+        <!-- Ligne de boutons pour choisir la colonne -->
+        <div class="columns">
+          {{range .ColRange}}
+            <button type="submit" name="col" value="{{.}}">▼</button>
+          {{end}}
+        </div>
 
-            <!-- Grille du jeu -->
-            <table class="board">
-            {{range .Grid}}
-                <tr>
-                {{range .}}
-                    <td class="{{if eq . 1}}token1{{else if eq . 2}}token2{{end}}"></td>
-                {{end}}
-                </tr>
-            {{end}}
-            </table>
-        </form>
-</div>
-
+        <!-- Grille du jeu -->
+        <table class="board">
+          {{range .Grid}}
+            <tr>
+              {{range .}}
+                <td class="{{if eq . 1}}token1{{else if eq . 2}}token2{{end}}"></td>
+              {{end}}
+            </tr>
+          {{end}}
+        </table>
+      </form>
+    </div>
+  </div>
 </body>
 </html>

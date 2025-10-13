@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+    "strconv"
 )
 
 type Game struct {
@@ -104,6 +105,56 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 	}
     game := NewGame(player1, player2, difficulty)
 
+    tmpl, err := template.ParseFiles("templates/game.html")
+    if err != nil {
+        log.Fatal(err)
+    }
+    tmpl.Execute(w, game)
+}
+
+func placeToken(game *Game, col int) {
+    for i := game.Rows - 1; i >= 0; i-- {
+        if game.Grid[i][col] == 0 {
+            game.Grid[i][col] = game.CurrentPlayer
+            break
+        }
+    }
+    // Passer au joueur suivant
+    if game.CurrentPlayer == 1 {
+        game.CurrentPlayer = 2
+    } else {
+        game.CurrentPlayer = 1
+    }
+}
+
+func checkWinOrDraw(game *Game) {
+}
+
+
+func PlayHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.Redirect(w, r, "/", http.StatusSeeOther)
+        return
+    }
+
+    // Récupérer les données du formulaire
+    player1 := r.FormValue("player1")
+    player2 := r.FormValue("player2")
+    difficulty := r.FormValue("difficulty")
+    col := r.FormValue("col")
+
+   
+    game := NewGame(player1, player2, difficulty)
+
+    colIndex, _ := strconv.Atoi(col)
+
+    // Placer le jeton dans la colonne choisie
+    placeToken(game, colIndex)
+
+    // Vérifier victoire ou égalité
+    checkWinOrDraw(game)
+
+    // Recharger le template du jeu
     tmpl, err := template.ParseFiles("templates/game.html")
     if err != nil {
         log.Fatal(err)
