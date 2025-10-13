@@ -110,3 +110,15 @@ func (g *Game) CheckWin() int {
 	}
 	return 0
 }
+
+// Reset vide la grille et réinitialise l'état de la partie
+func (g *Game) Reset() {
+    for r := 0; r < g.Rows; r++ {
+        for c := 0; c < g.Cols; c++ {
+            g.Grid[r][c] = 0
+        }
+    }
+    g.CurrentPlayer = 1
+    g.Winner = 0
+    g.Draw = false
+}

@@ -10,6 +10,7 @@ func main() {
 	http.HandleFunc("/welcome", web.WelcomeHandler)
 	http.HandleFunc("/game", web.GameHandler)
 	http.HandleFunc("/play", web.PlayHandler)
+	http.HandleFunc("/rematch", web.RematchHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.ListenAndServe(":8080", nil)
 }

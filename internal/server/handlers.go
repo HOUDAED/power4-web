@@ -17,7 +17,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
-
 func WelcomeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -45,7 +44,6 @@ func WelcomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpl.Execute(w, game)
 }
-
 
 // Démarrage d'une nouvelle partie
 // -------------------------
@@ -125,4 +123,36 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tmpl.Execute(w, currentGame)
+}
+
+func RematchHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.Redirect(w, r, "/", http.StatusSeeOther)
+        return
+    }
+
+    action := r.FormValue("type") // "revanche" ou "new"
+
+    switch action {
+    case "revanche":
+        if currentGame != nil {
+            currentGame.Reset() // on réinitialise juste la grille
+        }
+        // Afficher directement la partie réinitialisée
+        tmpl, err := template.ParseFiles("templates/game.html")
+        if err != nil {
+            log.Println("Erreur template:", err)
+            http.Error(w, "Erreur interne", http.StatusInternalServerError)
+            return
+        }
+        tmpl.Execute(w, currentGame)
+        return
+    case "new":
+        currentGame = nil
+        http.Redirect(w, r, "/", http.StatusSeeOther)
+        return
+    default:
+        http.Redirect(w, r, "/", http.StatusSeeOther)
+        return
+    }
 }
