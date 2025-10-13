@@ -68,7 +68,6 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, currentGame)
 }
 
-
 func PlayHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -78,11 +77,10 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 	colStr := r.FormValue("col")
 	colIndex, err := strconv.Atoi(colStr)
 	if err != nil {
-		http.Redirect(w, r, "/game", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
-	// Initialisation de la partie si nécessaire
 	if currentGame == nil {
 		player1 := r.FormValue("player1")
 		player2 := r.FormValue("player2")
@@ -90,15 +88,18 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 		currentGame = NewGame(player1, player2, difficulty)
 	}
 
-	// Si partie terminée
+	// Si la partie est terminée → juste réafficher le plateau
 	if currentGame.Winner != 0 || currentGame.Draw {
-		http.Redirect(w, r, "/game", http.StatusSeeOther)
+		tmpl, _ := template.ParseFiles("templates/game.html")
+		tmpl.Execute(w, currentGame)
 		return
 	}
 
-	// Placement du jeton
+	// Si la colonne est pleine, on ne redirige plus : on réaffiche le plateau avec un message optionnel
 	if !currentGame.PlaceToken(colIndex) {
-		http.Redirect(w, r, "/game", http.StatusSeeOther)
+		// Optionnel : message d'erreur (colonne pleine)
+		tmpl, _ := template.ParseFiles("templates/game.html")
+		tmpl.Execute(w, currentGame)
 		return
 	}
 
@@ -109,7 +110,6 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 	} else if currentGame.CheckDraw() {
 		currentGame.Draw = true
 	} else {
-		// Changer de joueur
 		if currentGame.CurrentPlayer == 1 {
 			currentGame.CurrentPlayer = 2
 		} else {
@@ -117,13 +117,12 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Recharger le plateau
+	// Réaffichage du plateau
 	tmpl, err := template.ParseFiles("templates/game.html")
 	if err != nil {
-		log.Println("Erreur chargement template :", err)
+		log.Println("Erreur template:", err)
 		http.Error(w, "Erreur interne", http.StatusInternalServerError)
 		return
 	}
-
 	tmpl.Execute(w, currentGame)
 }

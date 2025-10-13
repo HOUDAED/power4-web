@@ -27,12 +27,14 @@
       </div>
 
       <!-- Tour actuel -->
+      {{if not .Winner}}
       <p class="turn-indicator">
         Tour de :
         <strong class="{{if eq .CurrentPlayer 1}}player1-name{{else}}player2-name{{end}}">
           {{if eq .CurrentPlayer 1}}{{.Player1}}{{else}}{{.Player2}}{{end}}
         </strong>
       </p>
+      {{end}}
 
       <!-- Difficulté -->
       <p>
@@ -40,6 +42,23 @@
         <strong class="difficulty-badge {{.Difficulty}}">{{.Difficulty}}</strong>
       </p>
     </header>
+
+    <!-- Affichage du gagnant ou match nul -->
+    {{if .Winner}}
+      <div class="game-result winner">
+        <div class="result-card">
+          <h2 class="result-title">Victoire ! 🎉</h2>
+          <p class="result-player">{{if eq .Winner 1}}{{.Player1}}{{else}}{{.Player2}}{{end}} a remporté la partie</p>
+        </div>
+      </div>
+    {{else if .Draw}}
+      <div class="game-result draw">
+        <div class="result-card">
+          <h2 class="result-title">Match nul 🤝</h2>
+          <p class="result-player">Aucun gagnant cette fois-ci</p>
+        </div>
+      </div>
+    {{end}}
 
     <!-- Plateau du jeu -->
     <div class="game-container">
@@ -49,11 +68,13 @@
         <input type="hidden" name="difficulty" value="{{.Difficulty}}">
 
         <!-- Ligne de boutons pour choisir la colonne -->
+        {{if not .Winner}}
         <div class="columns">
           {{range .ColRange}}
             <button type="submit" name="col" value="{{.}}">▼</button>
           {{end}}
         </div>
+        {{end}}
 
         <!-- Grille du jeu -->
         <table class="board">
