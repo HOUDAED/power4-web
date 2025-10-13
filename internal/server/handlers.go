@@ -4,21 +4,10 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-    "strconv"
+	"strconv"
 )
 
-type Game struct {
-    Player1       string
-    Player2       string
-    Difficulty    string
-    Rows          int
-    Cols          int
-    Grid          [][]int
-    CurrentPlayer int
-    Winner        int
-    Draw          bool
-    ColRange      []int  // ajout pour générer les boutons colonnes
-}
+var currentGame *Game
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("templates/index.html")
@@ -28,22 +17,23 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
+
 func WelcomeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
-        return
+		return
 	}
 
-    player1 := r.FormValue("player1")
+	player1 := r.FormValue("player1")
 	player2 := r.FormValue("player2")
 	difficulty := r.FormValue("difficulty")
-    
+
 	if player1 == "" || player2 == "" || difficulty == "" {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
-
-    game := Game{
+	game := Game{
 		Player1:    player1,
 		Player2:    player2,
 		Difficulty: difficulty,
@@ -56,108 +46,84 @@ func WelcomeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, game)
 }
 
-func NewGame(player1, player2, difficulty string) *Game {
-    var rows, cols int
-    switch difficulty {
-    case "easy":
-        rows, cols = 6, 7
-    case "normal":
-        rows, cols = 6, 9
-    case "hard":
-        rows, cols = 7, 8
-    }
 
-    grid := make([][]int, rows)
-    for i := range grid {
-        grid[i] = make([]int, cols)
-    }
-
-    colRange := make([]int, cols)
-    for i := 0; i < cols; i++ {
-        colRange[i] = i
-    }
-
-    return &Game{
-        Player1:       player1,
-        Player2:       player2,
-        Difficulty:    difficulty,
-        Rows:          rows,
-        Cols:          cols,
-        Grid:          grid,
-        CurrentPlayer: 1,
-        ColRange:      colRange,
-    }
-}
-
+// Démarrage d'une nouvelle partie
+// -------------------------
 func GameHandler(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPost {
+	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-    
-    player1 := r.FormValue("player1")
-    player2 := r.FormValue("player2")
-    difficulty := r.FormValue("difficulty")
 
-    if player1 == "" || player2 == "" || difficulty == "" {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
+	player1 := r.FormValue("player1")
+	player2 := r.FormValue("player2")
+	difficulty := r.FormValue("difficulty")
+
+	currentGame = NewGame(player1, player2, difficulty)
+
+	tmpl, err := template.ParseFiles("templates/game.html")
+	if err != nil {
+		log.Fatal(err)
 	}
-    game := NewGame(player1, player2, difficulty)
-
-    tmpl, err := template.ParseFiles("templates/game.html")
-    if err != nil {
-        log.Fatal(err)
-    }
-    tmpl.Execute(w, game)
-}
-
-func placeToken(game *Game, col int) {
-    for i := game.Rows - 1; i >= 0; i-- {
-        if game.Grid[i][col] == 0 {
-            game.Grid[i][col] = game.CurrentPlayer
-            break
-        }
-    }
-    // Passer au joueur suivant
-    if game.CurrentPlayer == 1 {
-        game.CurrentPlayer = 2
-    } else {
-        game.CurrentPlayer = 1
-    }
-}
-
-func checkWinOrDraw(game *Game) {
+	tmpl.Execute(w, currentGame)
 }
 
 
 func PlayHandler(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPost {
-        http.Redirect(w, r, "/", http.StatusSeeOther)
-        return
-    }
+	if r.Method != http.MethodPost {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 
-    // Récupérer les données du formulaire
-    player1 := r.FormValue("player1")
-    player2 := r.FormValue("player2")
-    difficulty := r.FormValue("difficulty")
-    col := r.FormValue("col")
+	colStr := r.FormValue("col")
+	colIndex, err := strconv.Atoi(colStr)
+	if err != nil {
+		http.Redirect(w, r, "/game", http.StatusSeeOther)
+		return
+	}
 
-   
-    game := NewGame(player1, player2, difficulty)
+	// Initialisation de la partie si nécessaire
+	if currentGame == nil {
+		player1 := r.FormValue("player1")
+		player2 := r.FormValue("player2")
+		difficulty := r.FormValue("difficulty")
+		currentGame = NewGame(player1, player2, difficulty)
+	}
 
-    colIndex, _ := strconv.Atoi(col)
+	// Si partie terminée
+	if currentGame.Winner != 0 || currentGame.Draw {
+		http.Redirect(w, r, "/game", http.StatusSeeOther)
+		return
+	}
 
-    // Placer le jeton dans la colonne choisie
-    placeToken(game, colIndex)
+	// Placement du jeton
+	if !currentGame.PlaceToken(colIndex) {
+		http.Redirect(w, r, "/game", http.StatusSeeOther)
+		return
+	}
 
-    // Vérifier victoire ou égalité
-    checkWinOrDraw(game)
+	// Vérification victoire ou match nul
+	winner := currentGame.CheckWin()
+	if winner != 0 {
+		currentGame.Winner = winner
+	} else if currentGame.CheckDraw() {
+		currentGame.Draw = true
+	} else {
+		// Changer de joueur
+		if currentGame.CurrentPlayer == 1 {
+			currentGame.CurrentPlayer = 2
+		} else {
+			currentGame.CurrentPlayer = 1
+		}
+	}
 
-    // Recharger le template du jeu
-    tmpl, err := template.ParseFiles("templates/game.html")
-    if err != nil {
-        log.Fatal(err)
-    }
-    tmpl.Execute(w, game)
+	// Recharger le plateau
+	tmpl, err := template.ParseFiles("templates/game.html")
+	if err != nil {
+		log.Println("Erreur chargement template :", err)
+		http.Error(w, "Erreur interne", http.StatusInternalServerError)
+		return
+	}
+
+	tmpl.Execute(w, currentGame)
 }
