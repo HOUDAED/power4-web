@@ -12,6 +12,8 @@ type Game struct {
 	Winner        int
 	Draw          bool
 	ColRange      []int
+	TurnCount     int   // compteur de tours pour la gravité
+	GravityDown   bool  // true = gravité normale, false = inversée
 }
 
 // NewGame crée une nouvelle partie en fonction du niveau
@@ -47,18 +49,37 @@ func NewGame(player1, player2, difficulty string) *Game {
 		Grid:          grid,
 		CurrentPlayer: 1,
 		ColRange:      colRange,
+		TurnCount:     0,
+		GravityDown:   true,
 	}
 }
 
-// PlaceToken place un jeton dans la colonne choisie
+// PlaceToken place un jeton dans la colonne spécifiée en tenant compte de la gravité
 func (g *Game) PlaceToken(col int) bool {
-	for row := g.Rows - 1; row >= 0; row-- {
-		if g.Grid[row][col] == 0 {
-			g.Grid[row][col] = g.CurrentPlayer
-			return true
+	if g.GravityDown {
+		for row := g.Rows - 1; row >= 0; row-- {
+			if g.Grid[row][col] == 0 {
+				g.Grid[row][col] = g.CurrentPlayer
+				g.TurnCount++
+				if g.TurnCount%5 == 0 {
+					g.GravityDown = !g.GravityDown
+				}
+				return true
+			}
+		}
+	} else {
+		for row := 0; row < g.Rows; row++ {
+			if g.Grid[row][col] == 0 {
+				g.Grid[row][col] = g.CurrentPlayer
+				g.TurnCount++
+				if g.TurnCount%5 == 0 {
+					g.GravityDown = !g.GravityDown
+				}
+				return true
+			}
 		}
 	}
-	return false // colonne pleine
+	return false
 }
 
 // CheckDraw vérifie si la grille est pleine
@@ -113,12 +134,14 @@ func (g *Game) CheckWin() int {
 
 // Reset vide la grille et réinitialise l'état de la partie
 func (g *Game) Reset() {
-    for r := 0; r < g.Rows; r++ {
-        for c := 0; c < g.Cols; c++ {
-            g.Grid[r][c] = 0
-        }
-    }
-    g.CurrentPlayer = 1
-    g.Winner = 0
-    g.Draw = false
+	for r := 0; r < g.Rows; r++ {
+		for c := 0; c < g.Cols; c++ {
+			g.Grid[r][c] = 0
+		}
+	}
+	g.CurrentPlayer = 1
+	g.Winner = 0
+	g.Draw = false
+	g.TurnCount = 0
+	g.GravityDown = true
 }

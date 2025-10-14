@@ -46,7 +46,6 @@ func WelcomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Démarrage d'une nouvelle partie
-// -------------------------
 func GameHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -66,6 +65,7 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, currentGame)
 }
 
+// Jouer un coup
 func PlayHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -93,9 +93,9 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Si la colonne est pleine, on ne redirige plus : on réaffiche le plateau avec un message optionnel
+	// Placer le jeton en tenant compte de la gravité
 	if !currentGame.PlaceToken(colIndex) {
-		// Optionnel : message d'erreur (colonne pleine)
+		// Colonne pleine → réafficher le plateau
 		tmpl, _ := template.ParseFiles("templates/game.html")
 		tmpl.Execute(w, currentGame)
 		return
@@ -108,6 +108,7 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 	} else if currentGame.CheckDraw() {
 		currentGame.Draw = true
 	} else {
+		// Changement de joueur
 		if currentGame.CurrentPlayer == 1 {
 			currentGame.CurrentPlayer = 2
 		} else {
@@ -115,7 +116,6 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Réaffichage du plateau
 	tmpl, err := template.ParseFiles("templates/game.html")
 	if err != nil {
 		log.Println("Erreur template:", err)
@@ -125,34 +125,35 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, currentGame)
 }
 
+// Revanche ou nouvelle partie
 func RematchHandler(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPost {
-        http.Redirect(w, r, "/", http.StatusSeeOther)
-        return
-    }
+	if r.Method != http.MethodPost {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 
-    action := r.FormValue("type") // "revanche" ou "new"
+	action := r.FormValue("type") // "revanche" ou "new"
 
-    switch action {
-    case "revanche":
-        if currentGame != nil {
-            currentGame.Reset() // on réinitialise juste la grille
-        }
-        // Afficher directement la partie réinitialisée
-        tmpl, err := template.ParseFiles("templates/game.html")
-        if err != nil {
-            log.Println("Erreur template:", err)
-            http.Error(w, "Erreur interne", http.StatusInternalServerError)
-            return
-        }
-        tmpl.Execute(w, currentGame)
-        return
-    case "new":
-        currentGame = nil
-        http.Redirect(w, r, "/", http.StatusSeeOther)
-        return
-    default:
-        http.Redirect(w, r, "/", http.StatusSeeOther)
-        return
-    }
+	switch action {
+	case "revanche":
+		if currentGame != nil {
+			currentGame.Reset() // réinitialiser le plateau, garder joueurs et difficulté
+		}
+		// Afficher directement la partie réinitialisée
+		tmpl, err := template.ParseFiles("templates/game.html")
+		if err != nil {
+			log.Println("Erreur template:", err)
+			http.Error(w, "Erreur interne", http.StatusInternalServerError)
+			return
+		}
+		tmpl.Execute(w, currentGame)
+		return
+	case "new":
+		currentGame = nil
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	default:
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 }

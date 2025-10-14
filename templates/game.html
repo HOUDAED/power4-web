@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="/static/css/style.css">
   <link rel="stylesheet" href="/static/css/board.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="/static/js/script.js"></script>
 </head>
 <body>
   <div class="container">
@@ -43,36 +45,45 @@
       </p>
     </header>
 
-    <!-- Bloc résultat + boutons, au-dessus du plateau -->
-    {{if or .Winner .Draw}}
-<div class="game-result-container">
-  <div class="game-result-card neon-glow">
-    <div class="result-icon">
-      {{if .Winner}}
-        <span class="icon-win">🏆</span>
-      {{else if .Draw}}
-        <span class="icon-draw">🤝</span>
+    <!-- Indicateur de gravité -->
+    <div class="gravity-indicator" style="margin: 10px 0; text-align:center;">
+      {{if .GravityDown}}
+        <span class="gravity-normal">⬇ Gravité normale</span>
+      {{else}}
+        <span class="gravity-inverse">⬆ Gravité inversée</span>
       {{end}}
     </div>
 
-    <h2 class="result-title">
-      {{if .Winner}}Victoire !{{else}}Match nul !{{end}}
-    </h2>
-    <p class="result-player">
-      {{if .Winner}}{{if eq .Winner 1}}{{.Player1}}{{else}}{{.Player2}}{{end}} a remporté la partie 🎉{{else}}Aucun gagnant cette fois-ci{{end}}
-    </p>
+    <!-- Bloc résultat + boutons, au-dessus du plateau -->
+    {{if or .Winner .Draw}}
+    <div class="game-result-container">
+      <div class="game-result-card neon-glow">
+        <div class="result-icon">
+          {{if .Winner}}
+            <span class="icon-win">🏆</span>
+          {{else if .Draw}}
+            <span class="icon-draw">🤝</span>
+          {{end}}
+        </div>
 
-    <div class="rematch-options">
-      <form method="POST" action="/rematch">
-        <button type="submit" name="type" value="revanche">🔁 Rejouer</button>
-      </form>
-      <form method="POST" action="/rematch">
-        <button type="submit" name="type" value="new">🚀 Nouvelle Partie</button>
-      </form>
+        <h2 class="result-title">
+          {{if .Winner}}Victoire !{{else}}Match nul !{{end}}
+        </h2>
+        <p class="result-player">
+          {{if .Winner}}{{if eq .Winner 1}}{{.Player1}}{{else}}{{.Player2}}{{end}} a remporté la partie 🎉{{else}}Aucun gagnant cette fois-ci{{end}}
+        </p>
+
+        <div class="rematch-options">
+          <form method="POST" action="/rematch">
+            <button type="submit" name="type" value="revanche">🔁 Rejouer</button>
+          </form>
+          <form method="POST" action="/rematch">
+            <button type="submit" name="type" value="new">🚀 Nouvelle Partie</button>
+          </form>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-{{end}}
+    {{end}}
 
     <!-- Plateau du jeu -->
     <div class="game-container">

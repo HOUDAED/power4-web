@@ -9,6 +9,23 @@ body {
 
 h1 {
   margin-bottom: 1rem;
+  font-size: 2.5rem;
+  color: #00b4d8;
+  text-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+  animation: glowIn 1.2s ease-in-out;
+}
+
+@keyframes glowIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+    text-shadow: none;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+  }
 }
 
 .game-container {
@@ -36,12 +53,14 @@ h1 {
   cursor: pointer;
   padding: 8px 0;
   border-radius: 8px;
-  transition: 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
 }
 
 .columns button:hover {
   background: #0096c7;
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
 }
 
 /* Grille de jeu */
@@ -60,6 +79,12 @@ h1 {
   background-color: #0d1b2a;
   border-radius: 50%;
   box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.board td:hover {
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+  transform: scale(1.05);
 }
 
 /* Jetons */
@@ -82,6 +107,20 @@ h1 {
     font-size: 1rem;
   }
 }
+
+/* Indicateur de gravité */
+.gravity-indicator span {
+  display: inline-block;
+  font-size: 1.1rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1e3d59, #243b55);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+  color: #00b4d8;
+  font-weight: bold;
+  animation: fadeIn 1s ease-in-out;
+}
+
 /* Bloc résultat ultra stylé */
 .game-result-container {
   display: flex;
@@ -101,6 +140,23 @@ h1 {
   text-align: center;
   position: relative;
   overflow: hidden;
+}
+
+.game-result-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0,255,255,0.1), transparent);
+  animation: scan 4s infinite linear;
+  z-index: 0;
+}
+
+@keyframes scan {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 .neon-glow::before {
