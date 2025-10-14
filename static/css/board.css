@@ -96,6 +96,21 @@ h1 {
   background: radial-gradient(circle at 30% 30%, #ffe66d, #d4af37);
 }
 
+/* Jetons gagnants */
+.winning-token {
+  position: relative;
+  animation: pulseWinner 1.5s infinite ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+  z-index: 2;
+}
+
+@keyframes pulseWinner {
+  0% { box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.5); }
+  100% { box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3); }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .board td {
@@ -228,4 +243,35 @@ h1 {
   transform: scale(1.08);
   box-shadow: 0 0 18px rgba(0, 255, 255, 0.7);
   background: linear-gradient(135deg, #0096c7, #005f73);
+}
+
+/* Tour actuel stylé */
+.turn-indicator {
+  font-size: 1.4rem;
+  margin: 1rem 0;
+  color: #00b4d8;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+  animation: pulseTurn 2s infinite ease-in-out;
+}
+
+@keyframes pulseTurn {
+  0% { text-shadow: 0 0 8px rgba(0, 255, 255, 0.5); }
+  50% { text-shadow: 0 0 16px rgba(0, 255, 255, 0.8); }
+  100% { text-shadow: 0 0 8px rgba(0, 255, 255, 0.5); }
+}
+
+.current-player {
+  color: #ffffff;
+  background: linear-gradient(135deg, #00b4d8, #0077b6);
+  padding: 4px 10px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+  animation: glowPlayer 1.5s infinite ease-in-out;
+}
+
+@keyframes glowPlayer {
+  0% { transform: scale(1); box-shadow: 0 0 12px rgba(0, 255, 255, 0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 0 18px rgba(0, 255, 255, 0.6); }
+  100% { transform: scale(1); box-shadow: 0 0 12px rgba(0, 255, 255, 0.4); }
 }

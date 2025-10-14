@@ -12,8 +12,15 @@ type Game struct {
 	Winner        int
 	Draw          bool
 	ColRange      []int
-	TurnCount     int   // compteur de tours pour la gravité
-	GravityDown   bool  // true = gravité normale, false = inversée
+	TurnCount     int      // compteur de tours pour la gravité
+	GravityDown   bool     // true = gravité normale, false = inversée
+	WinningCells  [][2]int // positions des jetons gagnants
+}
+
+// Cell représente une cellule enrichie pour le rendu HTML
+type Cell struct {
+	Value     int  // 0, 1 ou 2
+	IsWinning bool // true si cette cellule fait partie des jetons gagnants
 }
 
 // NewGame crée une nouvelle partie en fonction du niveau
@@ -94,7 +101,7 @@ func (g *Game) CheckDraw() bool {
 	return true
 }
 
-// CheckWin vérifie les alignements de 4
+// CheckWin vérifie les alignements de 4 et enregistre les positions gagnantes
 func (g *Game) CheckWin() int {
 	directions := [][2]int{
 		{0, 1},  // horizontal →
@@ -109,27 +116,59 @@ func (g *Game) CheckWin() int {
 			if player == 0 {
 				continue
 			}
+
 			for _, d := range directions {
-				count := 1
+				cells := [][2]int{{r, c}}
+
 				for step := 1; step < 4; step++ {
 					nr := r + d[0]*step
 					nc := c + d[1]*step
+
 					if nr < 0 || nr >= g.Rows || nc < 0 || nc >= g.Cols {
 						break
 					}
 					if g.Grid[nr][nc] == player {
-						count++
+						cells = append(cells, [2]int{nr, nc})
 					} else {
 						break
 					}
 				}
-				if count == 4 {
+
+				if len(cells) == 4 {
+					g.Winner = player
+					g.WinningCells = cells
 					return player
 				}
 			}
 		}
 	}
 	return 0
+}
+
+// IsWinningCell vérifie si une cellule fait partie des cellules gagnantes
+func (g *Game) IsWinningCell(row, col int) bool {
+	for _, cell := range g.WinningCells {
+		if cell[0] == row && cell[1] == col {
+			return true
+		}
+	}
+	return false
+}
+
+// RenderedGrid retourne une grille enrichie pour le template HTML
+func (g *Game) RenderedGrid() [][]Cell {
+	grid := make([][]Cell, g.Rows)
+	for r := 0; r < g.Rows; r++ {
+		row := make([]Cell, g.Cols)
+		for c := 0; c < g.Cols; c++ {
+			row[c] = Cell{
+				Value:     g.Grid[r][c],
+				IsWinning: g.IsWinningCell(r, c),
+			}
+		}
+		grid[r] = row
+	}
+	return grid
 }
 
 // Reset vide la grille et réinitialise l'état de la partie
@@ -144,4 +183,5 @@ func (g *Game) Reset() {
 	g.Draw = false
 	g.TurnCount = 0
 	g.GravityDown = true
+	g.WinningCells = nil
 }

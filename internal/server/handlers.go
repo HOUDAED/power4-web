@@ -7,8 +7,38 @@ import (
 	"strconv"
 )
 
+// Variable globale pour la partie en cours
 var currentGame *Game
 
+// Structure intermédiaire pour le rendu HTML
+type GameView struct {
+	Player1       string
+	Player2       string
+	Difficulty    string
+	CurrentPlayer int
+	Winner        int
+	Draw          bool
+	ColRange      []int
+	GravityDown   bool
+	Grid          [][]Cell // grille enrichie avec IsWinning
+}
+
+// Convertit une Game en GameView pour le template
+func ToGameView(g *Game) GameView {
+	return GameView{
+		Player1:       g.Player1,
+		Player2:       g.Player2,
+		Difficulty:    g.Difficulty,
+		CurrentPlayer: g.CurrentPlayer,
+		Winner:        g.Winner,
+		Draw:          g.Draw,
+		ColRange:      g.ColRange,
+		GravityDown:   g.GravityDown,
+		Grid:          g.RenderedGrid(),
+	}
+}
+
+// Page d'accueil
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {
@@ -17,6 +47,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
+// Page de bienvenue après saisie des joueurs
 func WelcomeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -62,7 +93,7 @@ func GameHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tmpl.Execute(w, currentGame)
+	tmpl.Execute(w, ToGameView(currentGame))
 }
 
 // Jouer un coup
@@ -89,7 +120,7 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 	// Si la partie est terminée → juste réafficher le plateau
 	if currentGame.Winner != 0 || currentGame.Draw {
 		tmpl, _ := template.ParseFiles("templates/game.html")
-		tmpl.Execute(w, currentGame)
+		tmpl.Execute(w, ToGameView(currentGame))
 		return
 	}
 
@@ -97,7 +128,7 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 	if !currentGame.PlaceToken(colIndex) {
 		// Colonne pleine → réafficher le plateau
 		tmpl, _ := template.ParseFiles("templates/game.html")
-		tmpl.Execute(w, currentGame)
+		tmpl.Execute(w, ToGameView(currentGame))
 		return
 	}
 
@@ -122,7 +153,7 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur interne", http.StatusInternalServerError)
 		return
 	}
-	tmpl.Execute(w, currentGame)
+	tmpl.Execute(w, ToGameView(currentGame))
 }
 
 // Revanche ou nouvelle partie
@@ -137,16 +168,15 @@ func RematchHandler(w http.ResponseWriter, r *http.Request) {
 	switch action {
 	case "revanche":
 		if currentGame != nil {
-			currentGame.Reset() // réinitialiser le plateau, garder joueurs et difficulté
+			currentGame.Reset()
 		}
-		// Afficher directement la partie réinitialisée
 		tmpl, err := template.ParseFiles("templates/game.html")
 		if err != nil {
 			log.Println("Erreur template:", err)
 			http.Error(w, "Erreur interne", http.StatusInternalServerError)
 			return
 		}
-		tmpl.Execute(w, currentGame)
+		tmpl.Execute(w, ToGameView(currentGame))
 		return
 	case "new":
 		currentGame = nil

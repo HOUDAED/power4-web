@@ -32,8 +32,8 @@
       {{if not .Winner}}
       <p class="turn-indicator">
         Tour de :
-        <strong class="{{if eq .CurrentPlayer 1}}player1-name{{else}}player2-name{{end}}">
-          {{if eq .CurrentPlayer 1}}{{.Player1}}{{else}}{{.Player2}}{{end}}
+        <strong class="{{if eq .CurrentPlayer 1}}player1-name current-player{{else}}player2-name current-player{{end}}">
+        {{if eq .CurrentPlayer 1}}{{.Player1}}{{else}}{{.Player2}}{{end}}
         </strong>
       </p>
       {{end}}
@@ -54,7 +54,7 @@
       {{end}}
     </div>
 
-    <!-- Bloc résultat + boutons, au-dessus du plateau -->
+    <!-- Bloc résultat + boutons -->
     {{if or .Winner .Draw}}
     <div class="game-result-container">
       <div class="game-result-card neon-glow">
@@ -92,7 +92,7 @@
         <input type="hidden" name="player2" value="{{.Player2}}">
         <input type="hidden" name="difficulty" value="{{.Difficulty}}">
 
-        <!-- Ligne de boutons pour choisir la colonne -->
+        <!-- Ligne de boutons -->
         {{if not .Winner}}
         <div class="columns">
           {{range .ColRange}}
@@ -106,7 +106,7 @@
           {{range .Grid}}
             <tr>
               {{range .}}
-                <td class="{{if eq . 1}}token1{{else if eq . 2}}token2{{end}}"></td>
+                <td class="{{if eq .Value 1}}token1{{else if eq .Value 2}}token2{{end}}{{if .IsWinning}} winning-token{{end}}"></td>
               {{end}}
             </tr>
           {{end}}
@@ -114,5 +114,18 @@
       </form>
     </div>
   </div>
+
+  <!-- 🎉 Confetti JS déclenché si victoire -->
+  {{if .Winner}}
+  <script>
+    setTimeout(() => {
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }, 500);
+  </script>
+  {{end}}
 </body>
 </html>
