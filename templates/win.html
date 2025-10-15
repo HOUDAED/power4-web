@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Power4 Web - Victoire</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/board.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Power4 - Résultat</h1>
+      <div class="players-info">
+        <div class="player"><span class="player-token p1"></span><strong>{{.Player1}}</strong></div>
+        <span class="vs">VS</span>
+        <div class="player"><span class="player-token p2"></span><strong>{{.Player2}}</strong></div>
+      </div>
+    </header>
+
+    <div class="game-result-container">
+      <div class="game-result-card neon-glow">
+        <div class="result-icon">
+          <span class="icon-win">🏆</span>
+        </div>
+
+        <h2 class="result-title">Victoire !</h2>
+        <p class="result-player">
+          {{if eq .Winner 1}}{{.Player1}}{{else}}{{.Player2}}{{end}} a remporté la partie 🎉
+        </p>
+
+        <div class="rematch-options">
+          <form method="POST" action="/rematch">
+            <button type="submit" name="type" value="revanche">🔁 Rejouer</button>
+          </form>
+          <form method="POST" action="/rematch">
+            <button type="submit" name="type" value="new">🚀 Nouvelle Partie</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // confetti when showing the win page
+    setTimeout(function() {
+      confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 },
+        colors: ['#00b4d8', '#ffe66d', '#ff4b4b'] });
+    }, 200);
+  </script>
+</body>
+</html>

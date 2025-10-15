@@ -27,13 +27,16 @@
       </p>
       <p>Niveau choisi : <strong class="difficulty-badge {{.Difficulty}}">{{.Difficulty}}</strong></p>
     </div>
-
-    <form method="POST" action="/game">
-      <input type="hidden" name="player1" value="{{.Player1}}">
-      <input type="hidden" name="player2" value="{{.Player2}}">
-      <input type="hidden" name="difficulty" value="{{.Difficulty}}">
-      <button type="submit" class="start-btn">Commencer le jeu</button>
-    </form>
+    <div class="action-row">
+      <a href="/" class="action-btn back-btn" title="Retour">← Retour</a>
+      
+      <form method="POST" action="/game" class="inline-form">
+        <input type="hidden" name="player1" value="{{.Player1}}">
+        <input type="hidden" name="player2" value="{{.Player2}}">
+        <input type="hidden" name="difficulty" value="{{.Difficulty}}">
+        <button type="submit" class="action-btn start-btn">Commencer le jeu</button>
+      </form>
+    </div>
   </div>
 </body>
 </html>

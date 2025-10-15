@@ -136,8 +136,28 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 	winner := currentGame.CheckWin()
 	if winner != 0 {
 		currentGame.Winner = winner
+
+		// afficher page de victoire dédiée
+		tmpl, err := template.ParseFiles("templates/win.html")
+		if err != nil {
+			log.Println("Erreur template win:", err)
+			http.Error(w, "Erreur interne", http.StatusInternalServerError)
+			return
+		}
+		tmpl.Execute(w, ToGameView(currentGame))
+		return
 	} else if currentGame.CheckDraw() {
 		currentGame.Draw = true
+
+		// afficher page de match nul dédiée
+		tmpl, err := template.ParseFiles("templates/draw.html")
+		if err != nil {
+			log.Println("Erreur template draw:", err)
+			http.Error(w, "Erreur interne", http.StatusInternalServerError)
+			return
+		}
+		tmpl.Execute(w, ToGameView(currentGame))
+		return
 	} else {
 		// Changement de joueur
 		if currentGame.CurrentPlayer == 1 {
@@ -147,6 +167,7 @@ func PlayHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// réafficher le plateau si pas de fin
 	tmpl, err := template.ParseFiles("templates/game.html")
 	if err != nil {
 		log.Println("Erreur template:", err)

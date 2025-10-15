@@ -54,37 +54,6 @@
       {{end}}
     </div>
 
-    <!-- Bloc résultat + boutons -->
-    {{if or .Winner .Draw}}
-    <div class="game-result-container">
-      <div class="game-result-card neon-glow">
-        <div class="result-icon">
-          {{if .Winner}}
-            <span class="icon-win">🏆</span>
-          {{else if .Draw}}
-            <span class="icon-draw">🤝</span>
-          {{end}}
-        </div>
-
-        <h2 class="result-title">
-          {{if .Winner}}Victoire !{{else}}Match nul !{{end}}
-        </h2>
-        <p class="result-player">
-          {{if .Winner}}{{if eq .Winner 1}}{{.Player1}}{{else}}{{.Player2}}{{end}} a remporté la partie 🎉{{else}}Aucun gagnant cette fois-ci{{end}}
-        </p>
-
-        <div class="rematch-options">
-          <form method="POST" action="/rematch">
-            <button type="submit" name="type" value="revanche">🔁 Rejouer</button>
-          </form>
-          <form method="POST" action="/rematch">
-            <button type="submit" name="type" value="new">🚀 Nouvelle Partie</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    {{end}}
-
     <!-- Plateau du jeu -->
     <div class="game-container">
       <form method="POST" action="/play">
@@ -102,7 +71,7 @@
         {{end}}
 
         <!-- Grille du jeu -->
-        <table class="board">
+        <table class="board {{if .GravityDown}}gravity-down{{else}}gravity-up{{end}}">
           {{range .Grid}}
             <tr>
               {{range .}}
