@@ -208,3 +208,29 @@ func RematchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+func MockupVictoireHandler(w http.ResponseWriter, r *http.Request) {
+    tmpl, err := template.ParseFiles("templates/mockup_victoire.html")
+    if err != nil {
+        http.Error(w, "Erreur template", http.StatusInternalServerError)
+        return
+    }
+    tmpl.Execute(w, nil)
+}
+
+func MockupNulHandler(w http.ResponseWriter, r *http.Request) {
+    tmpl, err := template.ParseFiles("templates/mockup_nul.html")
+    if err != nil {
+        http.Error(w, "Erreur template", http.StatusInternalServerError)
+        return
+    }
+    tmpl.Execute(w, nil)
+}
+
+func MockupGraviteInverseHandler(w http.ResponseWriter, r *http.Request) {
+    tmpl, err := template.ParseFiles("templates/mockup_plateau_inverse.html")
+    if err != nil {
+        http.Error(w, "Erreur template", http.StatusInternalServerError)
+        return
+    }
+    tmpl.Execute(w, nil)
+}

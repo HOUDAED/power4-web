@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Power4 Web - Mockup Victoire</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/board.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Power4 - Partie (Mockup Victoire)</h1>
+      <div class="players-info">
+        <div class="player"><span class="player-token p1"></span><strong>Joueur 1</strong></div>
+        <span class="vs">VS</span>
+        <div class="player"><span class="player-token p2"></span><strong>Joueur 2</strong></div>
+      </div>
+      <p class="turn-indicator">Tour de : <strong class="player1-name current-player">Joueur 1</strong></p>
+      <p>Niveau : <strong class="difficulty-badge easy">Easy</strong></p>
+      <div class="gravity-indicator"><span class="gravity-normal">⬇ Gravité normale</span></div>
+    </header>
+
+    <div class="game-container">
+      <form method="POST" action="/play">
+        <div class="columns">
+          <button type="submit" name="col" value="0">▼</button>
+          <button type="submit" name="col" value="1">▼</button>
+          <button type="submit" name="col" value="2">▼</button>
+          <button type="submit" name="col" value="3">▼</button>
+          <button type="submit" name="col" value="4">▼</button>
+          <button type="submit" name="col" value="5">▼</button>
+          <button type="submit" name="col" value="6">▼</button>
+        </div>
+
+        <table class="board gravity-down">
+          <tr>
+            <td class="token1 winning-token"></td>
+            <td class="token1 winning-token"></td>
+            <td class="token1 winning-token"></td>
+            <td class="token1 winning-token"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td><td class="token2"></td><td></td><td></td><td class="token2"></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td class="token1"></td><td></td><td></td><td class="token2"></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td class="token2"></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td class="token1"></td><td></td><td></td><td class="token2"></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="token2"></td><td></td><td></td><td></td><td></td><td class="token1"></td><td></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+
+    <!-- Victoire -->
+    <div class="game-result-container">
+      <div class="game-result-card neon-glow" id="victoryCard">
+        <div class="result-icon"><span class="icon-win">🏆</span></div>
+        <h2 class="result-title">Victoire !</h2>
+        <p class="result-player">Joueur 1 a remporté la partie 🎉</p>
+        <div class="rematch-options">
+          <form method="POST" action="/rematch">
+            <button type="submit" name="type" value="revanche">🔁 Rejouer</button>
+          </form>
+          <form method="POST" action="/rematch">
+            <button type="submit" name="type" value="new">🚀 Nouvelle Partie</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Confetti automatique
+    setTimeout(() => {
+      confetti({
+        particleCount: 200,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#00b4d8', '#ffe66d', '#ff4b4b']
+      });
+    }, 500);
+  </script>
+</body>
+</html>

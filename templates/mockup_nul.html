@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Power4 Web - Match Nul</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/board.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Power4 - Partie (Mockup Nul)</h1>
+      <div class="players-info">
+        <div class="player"><span class="player-token p1"></span><strong>Joueur 1</strong></div>
+        <span class="vs">VS</span>
+        <div class="player"><span class="player-token p2"></span><strong>Joueur 2</strong></div>
+      </div>
+      <p class="turn-indicator">Tour de : <strong class="player1-name current-player">Joueur 1</strong></p>
+      <p>Niveau : <strong class="difficulty-badge easy">Easy</strong></p>
+      <div class="gravity-indicator"><span class="gravity-normal">⬇ Gravité normale</span></div>
+    </header>
+
+    <div class="game-container">
+      <table class="board gravity-down">
+        <!-- Ligne 1 -->
+        <tr>
+          <td class="token2"></td><td class="token1"></td><td class="token2"></td><td class="token1"></td><td class="token2"></td><td class="token1"></td><td class="token2"></td>
+        </tr>
+        <!-- Ligne 2 -->
+        <tr>
+          <td class="token2"></td><td class="token1"></td><td class="token1"></td><td class="token2"></td><td class="token2"></td><td class="token2"></td><td class="token1"></td>
+        </tr>
+        <!-- Ligne 3 -->
+        <tr>
+          <td class="token1"></td><td class="token2"></td><td class="token1"></td><td class="token2"></td><td class="token1"></td><td class="token1"></td><td class="token1"></td>
+        </tr>
+        <!-- Ligne 4 -->
+        <tr>
+          <td class="token1"></td><td class="token2"></td><td class="token1"></td><td class="token1"></td><td class="token2"></td><td class="token2"></td><td class="token1"></td>
+        </tr>
+        <!-- Ligne 5 -->
+        <tr>
+          <td class="token2"></td><td class="token1"></td><td class="token2"></td><td class="token1"></td><td class="token2"></td><td class="token1"></td><td class="token2"></td>
+        </tr>
+        <!-- Ligne 6 -->
+        <tr>
+          <td class="token1"></td><td class="token2"></td><td class="token1"></td><td class="token2"></td><td class="token1"></td><td class="token2"></td><td class="token1"></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="game-result-container">
+      <div class="game-result-card neon-glow">
+        <div class="result-icon">
+          <span class="icon-draw">🤝</span>
+        </div>
+        <h2 class="result-title">Match nul !</h2>
+        <p class="result-player">Aucun gagnant cette fois-ci.</p>
+        <div class="rematch-options">
+          <form method="POST" action="/rematch">
+            <button type="submit" name="type" value="revanche">🔁 Rejouer</button>
+          </form>
+          <form method="POST" action="/rematch">
+            <button type="submit" name="type" value="new">🚀 Nouvelle Partie</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
