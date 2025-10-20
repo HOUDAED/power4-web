@@ -44,7 +44,7 @@ If Go is not installed, follow instructions at <https://go.dev/doc/install>.
 
 1. Open a terminal.
 2. Go to the project folder:
-   - cd /home/jr/power4-web
+   - power4-web
 3. (Optional) install/update Go module dependencies:
    - go mod tidy
 4. Start the server:
@@ -115,7 +115,6 @@ Optional: build a binary and run it:
   - POST /game — start a game (from welcome)
   - POST /play — submit a move
   - POST /rematch — rematch or new game
-  - GET /result — final result page (win / draw)
   - Static files served under /static/
 
 ## Where to change things (if you want to customize)
